@@ -2,21 +2,39 @@ name: python-ci-tests
 on: 
   - push
 jobs:
-  build:
+  # build:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Set up Python 3.11
+  #       uses: actions/setup-python@v3
+  #       with:
+  #         python-version: 3.11
+  #     - name: Install dependencies
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install pylint
+  #         pip install -U pytest
+  #     - name: Analysing the code with pylint
+  #       run: |
+  #         pylint $(find . -name "*.py" | xargs)
+  #     - name: Run Python Tests
+  #       run: pytest
+  build_on_docker:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v3
-        with:
-          python-version: 3.11
-      - name: Install dependencies
+      - name: Login to Docker
+        shell: bash
+        env:
+          DOCKER_USERNAME: ${{ vars.DOCKER_HUB_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_TOKEN }}
+        run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - name: Pull Container Image
+        run: docker pull arms11/builder
+      - name: Run Lint
         run: |
-          python -m pip install --upgrade pip
-          pip install pylint
-          pip install -U pytest
-      - name: Analysing the code with pylint
-        run: |
-          pylint $(find . -name "*.py" | xargs)
-      - name: Run Python Tests
-        run: pytest
+          docker run -v $(pwd):/app -w /app arms11/builder pylint $(find . -name "*.py" | xargs)
+      - name: Run Tests
+        run: docker run -v $(pwd):/app -w /app arms11/builder pytest
+        
