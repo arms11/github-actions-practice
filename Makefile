@@ -9,10 +9,10 @@ pull:
 	@docker pull $(IMAGE_NAME)
 
 lint:
-	@docker run -v $(pwd):/app \
+	@docker run -v $(shell pwd):/app \
 		-w /app $(IMAGE_NAME) \
 		pylint $(find . -name "*.py" | xargs)
 
 Test:
-	@docker run -v $(pwd):/app \
+	@docker run -v $(shell pwd):/app \
 		-w /app $(IMAGE_NAME) pytest
