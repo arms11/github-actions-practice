@@ -24,17 +24,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Login to Docker
-        shell: bash
-        env:
-          DOCKER_USERNAME: ${{ vars.DOCKER_HUB_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_TOKEN }}
-        run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - name: docker-login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+      - name: Pull Sample Image
+        run: make pull_sample
+      # - name: Login to Docker
+      #   shell: bash
+      #   env:
+      #     DOCKER_USERNAME: ${{ vars.DOCKER_HUB_USER }}
+      #     DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_TOKEN }}
+      #   run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - name: Pull Container Image
-        run: docker pull arms11/builder
+        run: make pull
       - name: Run Lint
-        run: |
-          docker run -v $(pwd):/app -w /app arms11/builder pylint $(find . -name "*.py" | xargs)
+        run: make lint
       - name: Run Tests
-        run: docker run -v $(pwd):/app -w /app arms11/builder pytest
-        
+        run: make test
