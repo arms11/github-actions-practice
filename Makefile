@@ -3,7 +3,7 @@ IMAGE_NAME := arms11/builder
 SAMPLE_IMAGE := arms11/stock-alert
 
 pull_sample:
-  @docker pull $(SAMPLE_IMAGE)
+	@docker pull $(SAMPLE_IMAGE)
 
 pull:
 	@docker pull $(IMAGE_NAME)
