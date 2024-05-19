@@ -27,7 +27,7 @@ st2:
 	@cd st2-docker && docker-compose up -d;
 
 inspect:
-	@cd st2-docker && docker-compose exec st2client st2 run core.echo message=hello;
+	@cd st2-docker && docker exec -T st2-docker_st2client_1 st2 run core.echo message=hello;
 
 cleanup:
 	@cd st2-docker && docker-compose down --remove-orphans -v;
