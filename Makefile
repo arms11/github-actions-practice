@@ -3,8 +3,6 @@ IMAGE_NAME := arms11/builder
 SAMPLE_IMAGE := arms11/stock-alert
 CURRENT_DIR := $(shell pwd)
 export ST2_EXPOSE_HTTP := 8080
-export COMPOSE_INTERACTIVE_NO_CLI := 1
-
 
 .PHONY: clean pull_sample pull lint test st2 cleanup
 
@@ -27,7 +25,7 @@ st2:
 	@cd st2-docker && docker-compose up -d;
 
 inspect:
-	@cd st2-docker && docker exec -T st2-docker_st2client_1 st2 run core.echo message=hello;
+	@cd st2-docker && docker exec st2-docker_st2client_1 st2 run core.echo message=hello;
 
 cleanup:
 	@cd st2-docker && docker-compose down --remove-orphans -v;
