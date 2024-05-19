@@ -3,6 +3,8 @@ IMAGE_NAME := arms11/builder
 SAMPLE_IMAGE := arms11/stock-alert
 CURRENT_DIR := $(shell pwd)
 export ST2_EXPOSE_HTTP := 8080
+export COMPOSE_INTERACTIVE_NO_CLI := 1
+
 
 .PHONY: clean pull_sample pull lint test st2 cleanup
 
