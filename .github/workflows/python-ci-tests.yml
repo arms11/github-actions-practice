@@ -2,6 +2,24 @@ name: python-ci-tests
 on: 
   - push
 jobs:
+  deploy:
+    name: Deploy StackStorm
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout
+
+      - name: Deploy StackStorm
+        run: make st2
+
+      - name: Inspect StackStorm
+        run: make inspect
+
+      - name: Cleanup
+        run: make cleanup
+
+
+        
   # build:
   #   runs-on: ubuntu-latest
   #   steps:
@@ -20,26 +38,26 @@ jobs:
   #         pylint $(find . -name "*.py" | xargs)
   #     - name: Run Python Tests
   #       run: pytest
-  build_on_docker:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: docker-login
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
-          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
-      - name: Pull Sample Image
-        run: make pull_sample
-      # - name: Login to Docker
-      #   shell: bash
-      #   env:
-      #     DOCKER_USERNAME: ${{ vars.DOCKER_HUB_USER }}
-      #     DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_TOKEN }}
-      #   run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - name: Pull Container Image
-        run: make pull
-      - name: Run Lint
-        run: make lint
-      - name: Run Tests
-        run: make test
+  # build_on_docker:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: docker-login
+  #       uses: docker/login-action@v2
+  #       with:
+  #         username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+  #         password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+  #     - name: Pull Sample Image
+  #       run: make pull_sample
+  #     # - name: Login to Docker
+  #     #   shell: bash
+  #     #   env:
+  #     #     DOCKER_USERNAME: ${{ vars.DOCKER_HUB_USER }}
+  #     #     DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_TOKEN }}
+  #     #   run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  #     - name: Pull Container Image
+  #       run: make pull
+  #     - name: Run Lint
+  #       run: make lint
+  #     - name: Run Tests
+  #       run: make test
