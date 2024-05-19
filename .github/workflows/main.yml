@@ -1,4 +1,4 @@
-name: python-ci-tests
+name: main
 on: 
   - push
 jobs:
@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - uses: actions/checkout
+      - uses: actions/checkout@v4
 
       - name: Deploy StackStorm
         run: make st2
