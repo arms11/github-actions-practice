@@ -3,8 +3,9 @@
 name: Dynamic PR Template
 
 on:
-  pull_request_target: # Use pull_request_target for security
-    branches: [main, develop, ...] # Your target branches
+  pull_request:
+    - branches:
+        - main
 
 jobs:
   update-pr-template:
@@ -17,32 +18,32 @@ jobs:
 
       - name: Determine changed files
         id: changed-files
-        uses: tj-actions/changed-files@v35
+        uses: tj-actions/changed-files@v45
         with:
           files: |
             **.sql
 
-      - name: Update PR Template
-        run: |
-          if [[ ${{ contains(steps.changed-files.outputs.all_changed_files, 'protected/') }} ]]; then
-            echo "::set-output name=template::.github/PULL_REQUEST_TEMPLATE_QUERIES.md"
-          elif [[ ${{ contains(steps.changed-files.outputs.all_changed_files, 'src/') }} ]]; then
-            echo "::set-output name=template::.github/PULL_REQUEST_TEMPLATE_SRC.md"
-          else
-            echo "::set-output name=template::.github/PULL_REQUEST_TEMPLATE_DEFAULT.md" # Optional default
-          fi
+      # - name: Update PR Template
+      #   run: |
+      #     if [[ ${{ contains(steps.changed-files.outputs.all_changed_files, 'protected/') }} ]]; then
+      #       echo "::set-output name=template::.github/PULL_REQUEST_TEMPLATE_QUERIES.md"
+      #     elif [[ ${{ contains(steps.changed-files.outputs.all_changed_files, 'src/') }} ]]; then
+      #       echo "::set-output name=template::.github/PULL_REQUEST_TEMPLATE_SRC.md"
+      #     else
+      #       echo "::set-output name=template::.github/PULL_REQUEST_TEMPLATE_DEFAULT.md" # Optional default
+      #     fi
 
-      - name: Apply PR Template
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const fs = require('fs').promises;
-            const templatePath = '${{ steps.update-pr-template.outputs.template }}';
-            const template = await fs.readFile(templatePath, 'utf8');
-            await github.rest.pulls.update({
-              pull_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: template,
-            });
+      # - name: Apply PR Template
+      #   uses: actions/github-script@v6
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     script: |
+      #       const fs = require('fs').promises;
+      #       const templatePath = '${{ steps.update-pr-template.outputs.template }}';
+      #       const template = await fs.readFile(templatePath, 'utf8');
+      #       await github.rest.pulls.update({
+      #         pull_number: context.issue.number,
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         body: template,
+      #       });
